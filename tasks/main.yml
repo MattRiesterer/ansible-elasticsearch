@@ -1,23 +1,34 @@
 ---
 - name: "include check-parameters.yml"
   include: checkParameters.yml
-- name: "include os-specific vars.yml"
+  tags:
+      - check
+- name: os-specific vars
   include_vars: "{{ansible_os_family}}.yml"
-- name: "include java.yml"
-  include: java.yml
-- name: "include elasticsearch.yml"
-  include: elasticsearch.yml
-- name: "include elasticsearch-config.yml"
-  include: elasticsearch-config.yml
-- name: "include elasticsearch-scripts.yml"
-  include: elasticsearch-scripts.yml
+  tags:
+      - always
+- include: java.yml
+  tags:
+      - java
+- include: elasticsearch.yml
+  tags:
+      - install
+- include: elasticsearch-config.yml
+  tags:
+      - config
+- include: elasticsearch-scripts.yml
   when: es_scripts
-- name: "include elasticsearch-plugins.yml"
-  include: elasticsearch-plugins.yml
+  tags:
+      - scripts
+- include: elasticsearch-plugins.yml
   when: es_plugins is defined or es_plugins_reinstall
-- name: "include elasticsearch-service.yml"
-  include: elasticsearch-service.yml
-- name: "include elasticsearch-templates.yml"
-  include: elasticsearch-templates.yml
+  tags:
+      - plugins
+- include: elasticsearch-service.yml
+  tags:
+      - service
+- include: elasticsearch-templates.yml
   when: es_templates
+  tags:
+      - templates
 - meta: flush_handlers
